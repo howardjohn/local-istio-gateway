@@ -1,0 +1,9 @@
+enableAutoMtls: false
+accessLogFile: /dev/stdout
+defaultConfig:
+  discoveryAddress: istiod:15010
+  controlPlaneAuthPolicy: NONE
+  terminationDrainDuration: 0s
+configSources:
+- address: fs:///var/lib/istio/config/data
+

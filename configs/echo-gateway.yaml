@@ -1,0 +1,45 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: echo
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: echo
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - echo
+  http:
+  - route:
+    - destination:
+        host: echo.local
+        port:
+          number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: echo
+spec:
+  hosts:
+  - "echo.local"
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: DNS

@@ -1,0 +1,28 @@
+version: "3.3"
+services:
+  istiod:
+    image: gcr.io/istio-testing/pilot:latest
+    command: [discovery, --registries=]
+    hostname: istiod
+    volumes:
+    - ./mesh:/etc/istio/config/mesh
+    - ./configs:/var/lib/istio/config/data
+    - ./secrets:/var/run/secrets
+  ingress:
+    image: gcr.io/istio-testing/proxyv2:latest
+    command: [proxy, router]
+    volumes:
+    - ./mesh:/etc/istio/config/mesh
+    environment:
+      FILE_MOUNTED_CERTS: "true"
+      ISTIO_META_NAMESPACE: istio-system
+      ISTIO_METAJSON_LABELS: '{"istio": "ingressgateway", "app": "istio-ingressgateway"}'
+    ports:
+    - 80:80
+  echo:
+    hostname: echo.local
+    image: gcr.io/istio-testing/app:latest
+    command: [--port=80]
+configs:
+  mesh:
+    file: ./mesh
